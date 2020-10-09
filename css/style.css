@@ -73,3 +73,15 @@ h2 {
 #vejr_intro {
     font-size: 2em;
 }
+
+#pic_sun{
+    width: 800px;
+}
+
+#sun{
+    font-size: 2em;
+}
+
+#sunset p{
+    font-size: 1em;
+}

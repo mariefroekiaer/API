@@ -10,6 +10,7 @@ $(document).ready(function () { // kører så snart DOM er klar
     console.log("jQuery 3.5.1 running. Alert level green.");
 
 
+    //her tilføjes mit kort, men den styling jeg har lavet 
     mapboxgl.accessToken = 'pk.eyJ1IjoibWFyaWVmcm9la2lhZXIiLCJhIjoiY2tmcWtxbWtqMGx1YzJybXQ4aHQzdnl3aiJ9.yHsLtkU7zlsztKl5iNnNsg';
     var map = new mapboxgl.Map({
         container: 'map', // container id
@@ -17,14 +18,13 @@ $(document).ready(function () { // kører så snart DOM er klar
         center: [10.169, 56.322], // starting position [lng, lat]
         zoom: 7, // starting zoom
         pitch: 50,
-       
+
     });
 
 
     var size = 200;
 
-    // implementation of CustomLayerInterface to draw a pulsing dot icon on the map
-    // see https://docs.mapbox.com/mapbox-gl-js/api/#customlayerinterface for more info
+    // her tilføjes en markør på Ebeltoft (pulsing dot)
     var pulsingDot = {
         width: size,
         height: size,
@@ -38,11 +38,12 @@ $(document).ready(function () { // kører så snart DOM er klar
             this.context = canvas.getContext('2d');
         },
 
-        // called once before every frame where the icon will be used
+        // Her sættes hastigheden på markøren til 2000 mili sekunder
         render: function () {
             var duration = 2000;
             var t = (performance.now() % duration) / duration;
 
+            //her sættes størrelsen på  markøren + ringen omkring makøren (som bevæger sig)
             var radius = (size / 2) * 0.2;
             var outerRadius = (size / 2) * 0.5 * t + radius;
             var context = this.context;
@@ -57,6 +58,8 @@ $(document).ready(function () { // kører så snart DOM er klar
                 0,
                 Math.PI * 2
             );
+
+            //her tilføjes farven på 
             context.fillStyle = 'rgba(255, 200, 200,' + (1 - t) + ')';
             context.fill();
 
@@ -121,68 +124,87 @@ $(document).ready(function () { // kører så snart DOM er klar
 
 
 
-//flyfuktionen
-document.getElementById('fly').addEventListener('click', function () {
-        // Fly to a random location by offsetting the point -74.50, 40
-        // by up to 5 degrees.
+    //Her tilføjes flyfuktionen - jeg bruger getElementById til at finde den kanp i HTML som skal reagere på eventListener - jeg tilføjer en eventListener med fuktionen click
+
+    document.getElementById('fly').addEventListener('click', function () {
+        
         map.flyTo({
-            center: [10.685, 56.200], // starting position [lng, lat]
+            center: [10.685, 56.200], // her tilføjes koordinater for Ebeltoft[lng, lat]
             zoom: 14.72, // starting zoom
-            //pitch: 55,
-            //bearing: 45
-            essential: true // this animation is considered essential with respect to prefers-reduced-motion
+            essential: true 
         });
     });
 
 
-    
-    
-    //openweathermap tilføjes 
-    
+
+    //Openweathermap tilføjes 
+
     //her tilføjes mit eget token
-     const token = "59081fac2780a036c37d749973f2e40f"; // save your token in this variable
+    const token = "59081fac2780a036c37d749973f2e40f"; // save your token in this variable
 
-    //her tilføjes API
-        const ebeltoft = " http://api.openweathermap.org/data/2.5/weather?q=Ebeltoft&lang=da&units=metric&appid,DK&appid=" +
-            token;
+    //her tilføjes API med byen Ebeltoft + sprog og enhed
+    const ebeltoft = " http://api.openweathermap.org/data/2.5/weather?q=Ebeltoft,DK&lang=da&units=metric&appid=" +
+        token;
+
+
+    // get the weather data
+    fetch(ebeltoft).then(response => {
+        return response.json();
+    }).then(data => {
+
+        // solnedgang
+        var sunsetMs = data.sys.sunset * 1000; // dato-objektet har brug for millisek. Derfor * 1000
+        var sunset = new Date(sunsetMs);
+
+        // Datoformattering @URI < https://www.w3schools.com/js/js_date_methods.asp >
+        var sunsetTime = sunset.getHours() + ":" + sunset.getMinutes();
+
+
+        //her tilføjes funktionen append som tilføjer de elementer som kommer efterfølgende med id="result"
+        $('#result').append(
+
+            //Her tilføjes en div vejrinformationen
+            '<div class="weatherInfo">' +
+
+            ' I dag er der ' +
+
+            //her tilføjes beskrivelsen
+            data.weather[0].description +
+
+
+            ' i ' +
+
+            //Her tilføjes bynavn
+            data.name +
+
+            //Her tilføjes vejrsymbolet
+            '<figure><img src="http://openweathermap.org/img/w/' +
+
+            data.weather[0].icon +
+            '.png" alt="The weather : ' + data.weather[0].main + '"></figure>' +
 
 
 
-            // get the weather data
-            fetch(ebeltoft).then(response => {
-                return response.json();
-            }).then(data => {
+            // afslutter #weatherInfo taggen
+            '</div>');
 
-                // Work with JSON data here
-                console.log(data); // show what's in the json
 
-                //her tilføjes funktionen append som tilføjer de elementer som kommer efterfølgende
-                $('#result').append(
-                    
-                    //Her tilføjes vejrinformationen
-                    '<div class="weatherInfo">' +
-                    
-                    ' I dag er der ' + 
-                    data.weather[0].description +
-                    ' i ' + data.name +
-                    
-                    //Her tilføjes vejrsymbolet
-                    '<figure><img src="http://openweathermap.org/img/w/' + data.weather[0].icon + '.png" alt="The weather : ' 
-                    
-                    + data.weather[0].main +
-                    '"></figure>' +
-                    
-                    '</div>');
-                
+        //her tilføjes funktionen append som tilføjer de elementer som kommer efterfølgende med id="sunset"
+        $('#sunset').append(
 
-                // here are the icons: https://openweathermap.org/weather-conditions 
+            '<div>' +
+            //her tilføjes klokkeslet for solnedgang 
+            '<p> Oplev solnedgang I Ebeltoft klokken ' +
+            sunsetTime + '</p>' +
 
-            }).catch(err => {
-                // Do something for an error here
-                console.log('There was an error ...');
-            });
+            '</div>');
 
-      
-    
+    }).catch(err => {
+        // Do something for an error here
+        console.log('There was an error ...');
+    });
+
+
+
 
 }); // denne line må ikke slettes
