@@ -1,0 +1,75 @@
+/**
+ * file: css/style.css
+ **/
+
+header {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+body {
+    margin: 0 auto;
+    background-color: antiquewhite;
+    font-family: 'Piazzolla', serif;
+}
+
+
+h1 {
+    color: #CC0000;
+    text-align: center;
+
+    font-size: 4em;
+}
+
+
+h2 {
+    text-align: center;
+}
+
+#art_pic {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 800px;
+    margin: 0 auto;
+}
+
+#art_pic img {
+    padding: 0.3em;
+}
+
+#info p {
+    text-align: center;
+    font-size: 1.3em;
+}
+
+#find {
+    text-align: center;
+    font-size: 2em;
+}
+
+
+#fly{
+    font-family: 'Piazzolla', serif;
+    background-color: #CC0000;
+    font-size: 0.5em;
+    border: none;
+    padding: 0.5em;
+    margin-bottom: 1em;
+    color: white;
+}
+
+#map {
+    margin: 0 auto;
+    width: 800px;
+    height: 400px;
+    border: 1px;
+}
+
+#vejr {
+    text-align: center;
+}
+
+#vejr_intro {
+    font-size: 2em;
+}
